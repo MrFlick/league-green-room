@@ -1,0 +1,14 @@
+{
+  "name": "leaguegreenroom",
+  "version": "0.0.1",
+  "description": "Scheduling helper for Pointless Brewerery and Theater",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew Flickinger",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
