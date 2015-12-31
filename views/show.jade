@@ -8,4 +8,8 @@ block content
   h3 Lineup
   ul
     each slot in slots
-      li= slot.team_name
+      li= slot.team_name+" "+slot.slot_id
+      if slot.cast
+        ul
+          each person in slot.cast
+            li= person.full_name
