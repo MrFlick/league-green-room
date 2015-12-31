@@ -12,8 +12,17 @@ app.get("/", function(req, res) {
 });
 
 app.get("/show", function(req, res) {
-	var shows = data.getShows(function(shows) {
+	data.getShows().then(function(shows) {
 		res.render("shows", {shows: shows});
+	});
+});
+
+app.get("/show/:id", function(req, res) {
+	Promise.all([
+		data.getShow(req.params.id),
+		data.getShowSlots(req.params.id)
+	]).then(function(values) {
+		res.render("show", {show: values[0], slots: values[1]});
 	});
 });
 

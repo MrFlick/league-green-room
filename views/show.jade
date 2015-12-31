@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h2 Here are the show details...
+  dl
+    dt Date/Time
+    dd= show.start_time
+  h3 Lineup
+  ul
+    each slot in slots
+      li= slot.team_name
