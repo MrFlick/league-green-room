@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h2 Here are the schedule details...
+  h3 Cast Grid
+  table
+    tr
+      td Show Date/Time;
+      each person in cast
+        td= person.full_name
+    each slot in slots
+      tr
+      td= slot.start_time + " " + slot.cast.size
+      each person in cast
+        td= slot.cast.has(person.user_id) ? "X" : "-"

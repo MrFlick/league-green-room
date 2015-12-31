@@ -44,6 +44,29 @@ app.get("/show/:id", function(req, res) {
 	});
 });
 
+app.get("/castgrid/:teamid", function(req, res) {
+	Promise.all([
+			data.getTeamCast(req.params.teamid),
+			data.getTeamSlots(req.params.teamid),
+			data.getTeamSlotCasts(req.params.teamid)
+	]).then(function(values) {
+		// merge cast info into slot data
+		var users = values[0];
+		var slots = values[1];
+		var casts = values[2];
+		var order = new Map(slots.map(function(x) {
+			x.cast = new Set();
+			return [x.slot_id,x]}
+		));
+		casts.forEach(function(x) {
+			order.get(x.slot_id).cast.add(x.user_id);
+		});
+		return({cast:users, slots:slots});
+	}).then(function(x) {
+		res.render("castgrid", x);
+	})
+});
+
 var server = app.listen(8080, function() {
 	var host = server.address().address;
 	var port = server.address().port;
