@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h2 Here are all the shows...
+  ul
+    each show in shows
+      li
+        a(href="/show/" + show.show_id)= show.start_time
