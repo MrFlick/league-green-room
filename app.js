@@ -24,6 +24,10 @@ app.get("/gcaltest", function(req, res) {
 	res.render("google-cal-test", {auth:config.google});
 });
 
+app.get("/fbtest", function(req, res) {
+	res.render("fb-auth-test", {auth:config.facebook});
+});
+
 app.get("/show", function(req, res) {
 	data.getShows().then(function(shows) {
 		res.render("shows", {shows: shows});
