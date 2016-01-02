@@ -20,6 +20,10 @@ app.get("/", function(req, res) {
 	res.render("layout");
 });
 
+app.get("/gcaltest", function(req, res) {
+	res.render("google-cal-test", {auth:config.google});
+});
+
 app.get("/show", function(req, res) {
 	data.getShows().then(function(shows) {
 		res.render("shows", {shows: shows});
