@@ -51,18 +51,28 @@ app.get("/castgrid/:teamid", function(req, res) {
 	Promise.all([
 		data.getTeamCast(req.params.teamid),
 		data.getTeamSlots(req.params.teamid),
-		data.getTeamSlotCasts(req.params.teamid)
+		data.getTeamSlotCasts(req.params.teamid),
+		data.getTeamAvailability(req.params.teamid)
 	]).then(function(values) {
-		// merge cast info into slot data
 		var users = values[0];
 		var slots = values[1];
 		var casts = values[2];
-		var order = new Map(slots.map(function(x) {
+		var avail = values[3];
+		// merge cast info into slot data
+		var slotLookup = new Map(slots.map(function(x) {
 			x.cast = new Set();
 			return [x.slot_id,x];
 		}));
 		casts.forEach(function(x) {
-			order.get(x.slot_id).cast.add(x.user_id);
+			slotLookup.get(x.slot_id).cast.add(x.user_id);
+		});
+		// merge availablity into user data
+		var userLookup = new Map(users.map(function(x) {
+			x.availability = new Map();
+			return [x.user_id,x];
+		}));
+		avail.forEach(function(x) {
+			userLookup.get(x.user_id).availability.set(x.show_id, x);
 		});
 		return({cast:users, slots:slots});
 	}).then(function(x) {

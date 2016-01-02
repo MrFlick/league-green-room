@@ -1,123 +1,140 @@
-var sqlite3 = require('sqlite3').verbose();
+/* global require module*/
+/* eslint-disable no-unused-vars */
+
+var sqlite3 = require("sqlite3").verbose();
 
 var DataStore = function(dbpath) {
-    var db = new sqlite3.Database(dbpath);
+	var db = new sqlite3.Database(dbpath);
 
-    this.getShows = function() {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT * FROM shows", function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    resolve(rows);
-                }
-            });
-        });
-    };
+	this.getShows = function() {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT * FROM shows", function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.getShow = function(showid) {
-        return new Promise(function(resolve, reject) {
-            db.get("SELECT * FROM shows WHERE show_id=?", showid, function(err, row) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(row);
-                }
-            });
-        });
-    };
+	this.getShow = function(showid) {
+		return new Promise(function(resolve, reject) {
+			db.get("SELECT * FROM shows WHERE show_id=?", showid, function(err, row) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(row);
+				}
+			});
+		});
+	};
 
-    this.getShowSlots = function(showid) {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT show_slots.*, teams.team_name " +
-            "FROM show_slots " +
-            "LEFT JOIN teams on teams.team_id = show_slots.team_id " +
-            "WHERE show_id=?", showid, function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(rows);
-                }
-            });
-        });
-    };
+	this.getShowSlots = function(showid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT show_slots.*, teams.team_name " +
+			"FROM show_slots " +
+			"LEFT JOIN teams on teams.team_id = show_slots.team_id " +
+			"WHERE show_id=?", showid, function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.getTeamSlots = function(teamid) {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT show_slots.*, shows.* " +
-            "FROM show_slots " +
-            "JOIN shows ON shows.show_id = show_slots.team_id " +
-            "WHERE team_id=?", teamid, function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(rows);
-                }
-            });
-        });
-    };
+	this.getTeamSlots = function(teamid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT show_slots.*, shows.* " +
+			"FROM show_slots " +
+			"JOIN shows ON shows.show_id = show_slots.team_id " +
+			"WHERE team_id=?", teamid, function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.getSlotCast = function(slotid) {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT show_slot_cast.*, users.full_name " +
-            "FROM show_slot_cast " +
-            "LEFT JOIN users on users.user_id = show_slot_cast.user_id " +
-            "WHERE slot_id=? " +
-            "ORDER BY users.full_name", slotid, function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(rows);
-                };
-            });
-        });
-    };
+	this.getSlotCast = function(slotid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT show_slot_cast.*, users.full_name " +
+			"FROM show_slot_cast " +
+			"LEFT JOIN users on users.user_id = show_slot_cast.user_id " +
+			"WHERE slot_id=? " +
+			"ORDER BY users.full_name", slotid, function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.getTeamSlotCasts = function(teamid) {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT show_slot_cast.* " +
-            "FROM show_slot_cast " +
-            "JOIN show_slots ON show_slots.slot_id = show_slot_cast.slot_id " +
-            "WHERE show_slots.team_id=? " +
-            "ORDER BY show_slots.slot_id", teamid, function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(rows);
-                };
-            });
-        });
-    };
+	this.getTeamSlotCasts = function(teamid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT show_slot_cast.* " +
+			"FROM show_slot_cast " +
+			"JOIN show_slots ON show_slots.slot_id = show_slot_cast.slot_id " +
+			"WHERE show_slots.team_id=? " +
+			"ORDER BY show_slots.slot_id", teamid, function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.getTeamCast = function(teamid) {
-        return new Promise(function(resolve, reject) {
-            db.all("SELECT users.* " +
-            "FROM users " +
-            "ORDER BY users.full_name", function(err, rows) {
-                if (err !== null) {
-                    console.log(err);
-                    reject(err);
-                } else  {
-                    resolve(rows);
-                };
-            });
-        });
-    };
+	this.getTeamCast = function(teamid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT users.* " +
+			"FROM users " +
+			"ORDER BY users.full_name", function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
+	this.getTeamAvailability = function(teamid) {
+		return new Promise(function(resolve, reject) {
+			db.all("SELECT * " +
+			"FROM cast_availability " +
+			"ORDER BY show_id, user_id", function(err, rows) {
+				if (err !== null) {
+					console.log(err);
+					reject(err);
+				} else  {
+					resolve(rows);
+				}
+			});
+		});
+	};
 
-    this.close = function() {
-        db.close();
-    }
-}
+	this.close = function() {
+		db.close();
+	};
+};
 
 module.exports = {
-    getDataStore: function(dbpath) {
-        return new DataStore(dbpath);
-    }
+	getDataStore: function(dbpath) {
+		return new DataStore(dbpath);
+	}
 };
