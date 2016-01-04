@@ -38,7 +38,7 @@ app.get("/fbtest", function(req, res) {
 
 app.get("/show", function(req, res) {
 	data.getShows().then(function(shows) {
-		res.render("shows", {shows: shows});
+		res.render("shows", {user:req.user, shows: shows});
 	});
 });
 
@@ -59,7 +59,8 @@ app.get("/show/:id", function(req, res) {
 			return values;
 		});
 	}).then(function(values) {
-		res.render("show", {show: values[0], slots: values[1]});
+		console.log(req.user);
+		res.render("show", {user:req.user, show: values[0], slots: values[1]});
 	});
 });
 

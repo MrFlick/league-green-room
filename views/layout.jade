@@ -9,4 +9,6 @@ html
       li
         a(href="/show") Shows
       li Availability
+    if user
+      p You are logged in as #{user.full_name}
     block content
