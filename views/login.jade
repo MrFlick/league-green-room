@@ -1,5 +1,8 @@
-html
-  head
-    title Pointless Brewery and Theater Green Room - Login
-  body
+extends layout
+
+block content
     p Please choose a login method
+    p
+      a(href="/auth/google") Login with Google
+    p
+      a(href="/auth/facebook") Login with Facebook
