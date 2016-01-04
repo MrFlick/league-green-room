@@ -2,8 +2,14 @@ CREATE TABLE users (
 	user_id INTEGER PRIMARY KEY,
 	full_name TEXT NOT NULL,
 	display_name TEXT,
-	email TEXT,
-	fb_user_id TEXT UNIQUE
+	email TEXT
+);
+
+CREATE TABLE user_logins (
+	user_id INTEGER NOT NULL,
+	auth_source TEXT NOT NULL,
+	auth_id TEXT NOT NULL,
+	PRIMARY KEY (auth_source, auth_id)
 );
 
 CREATE TABLE teams (

@@ -1,4 +1,4 @@
-/* global require */
+/* global require process */
 /* eslint-disable no-unused-vars */
 
 var express = require("express"),
@@ -30,19 +30,29 @@ passport.use(new FacebookStrategy({
 	clientSecret: config.facebook.clientSecret,
 	callbackURL: config.facebook.callbackURL
 }, function(accessToken, refreshToken, profile, done) {
-	console.log(accessToken, refreshToken, profile);
-	return done(null, profile);
+	console.log(profile);
+	process.nextTick(function() {
+		var user = data.getUser({source: "facebook", id: profile.id}).then(function(user) {
+			console.log(user);
+			return done(null, user);
+		}, function(err) {console.log(err);});
+	});
 }));
 passport.use(new GoogleStrategy({
 	clientID: config.google.clientID,
 	clientSecret: config.google.clientSecret,
 	callbackURL: config.google.callbackURL
 }, function(accessToken, refreshToken, profile, done) {
-	console.log(accessToken, refreshToken, profile);
-	return done(null, profile);
-}));
+	console.log(profile);
+	process.nextTick(function() {
+		var user = data.getUser({source: "google", id: profile.id}).then(function(user) {
+			console.log(user);
+			return done(null, user);
+		}, function(err) {console.log(err);});
+	});}));
 GoogleStrategy.prototype.userProfile = function(accessToken, done) {
-	this._oauth2.get("https://www.googleapis.com/plus/v1/people/me/openIdConnect", accessToken, function(err, body, res) {
+	//this._oauth2.get("https://www.googleapis.com/plus/v1/people/me/openIdConnect", accessToken, function(err, body, res) {
+	this._oauth2.get("https://www.googleapis.com/oauth2/v3/userinfo", accessToken, function(err, body, res) {
 		if (err) {
 			return done(err);
 		}
@@ -54,29 +64,29 @@ GoogleStrategy.prototype.userProfile = function(accessToken, done) {
 			var profile = {
 				provider: "google"
 			};
-			profile.id = json.id;
-			profile.displayName = json.displayName;
+			profile.id = json.sub;
+			profile.displayName = json.name;
 			if (json.name) {
 				profile.name = {
-					familyName: json.name.familyName,
-					givenName: json.name.givenName
+					familyName: json.family_name,
+					givenName: json.given_name
 				};
 			}
-			if (json.emails) {
+			if (json.email) {
 				profile.emails = [];
-				for (i = 0, len = json.emails.length; i < len; ++i) {
-					profile.emails.push({
-						value: json.emails[i].value,
-						type: json.emails[i].type
-					});
-				}
+				profile.emails.push({
+					value: json.email,
+					type: json.email_verified
+				});
 			}
-			if (json.image) {
+			if (json.picture) {
 				profile.photos = [{
-					value: json.image.url
+					value: json.picture
 				}];
 			}
-			profile.gender = json.gender;
+			if (json.gender) {
+				profile.gender = json.gender;
+			}
 
 			profile._raw = body;
 			profile._json = json;
@@ -97,7 +107,7 @@ passport.deserializeUser(function(obj, done) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/auth/facebook", passport.authenticate("facebook"));
+app.get("/auth/facebook", passport.authenticate("facebook", {scope: ["public_profile","email"]}));
 app.get("/auth/facebook/callback", passport.authenticate("facebook", {
 	successRedirect: "/show",
 	failureRedirect: "/login"

@@ -33,6 +33,16 @@ function getOne(db, sql) {
 var DataStore = function(dbpath) {
 	var db = new sqlite3.Database(dbpath);
 
+	this.getUser = function(user) {
+		if (typeof user == "number") {
+			return getOne(db, "SELECT * FROM users WHERE user_id=?", user);
+		} else {
+			return getOne(db, "SELECT users.* FROM users " +
+				"JOIN user_logins ON user_logins.user_id = users.user_id " +
+				"WHERE auth_source=? and auth_id=?", user.source, user.id);
+		}
+	};
+
 	this.getShows = function() {
 		return getAll(db, "SELECT * FROM shows");
 	};
